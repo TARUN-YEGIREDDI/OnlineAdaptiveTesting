@@ -1,0 +1,78 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Select Role</title>
+</head>
+<body>
+    <h1>Select Role</h1>
+    <form action="{{ url_for('role_redirect') }}" method="post">
+        <label>
+            <input type="radio" name="role" value="teacher" required> Teacher
+        </label>
+        <label>
+            <input type="radio" name="role" value="student" required> Student
+        </label>
+        <input type="submit" value="Proceed">
+    </form>
+</body>
+</html>
+
+ -->
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role_selection</title>
+    <style>
+        body
+        {
+            background-color: #405D72;
+        }
+        .main
+        {
+            height: 250px;
+            width: 350px;
+            background-color:white;
+            margin:auto;
+            text-align: center;
+            margin-top: 180px;
+            padding-top: 50px;
+            border-radius: 15px;
+            box-shadow:0px 20px 35px rgba(0,0,1,0.9);
+        }
+        button
+        {
+            border-radius: 5px;
+            color:black;
+            background-color: white;
+            padding: 10px;
+            font-size: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h2>Select your Role</h2>
+        <!-- <button onclick="redirectToPage('studentsubject.html')">Student</button>
+        <button onclick="redirectToPage('subjectselection.html')">Teacher</button> -->
+        <form action="{{ url_for('role_redirect') }}" method="post">
+            <label>
+                <input type="radio" name="role" value="teacher" required> Teacher
+            </label>
+            <label>
+                <input type="radio" name="role" value="student" required> Student
+            </label>
+            <input type="submit" value="Proceed">
+        </form>
+    </div>
+    <!-- <script>
+        function redirectToPage(pageUrl) {
+            window.location.href = pageUrl;
+        }
+    </script> -->
+    
+</body>
+</html>

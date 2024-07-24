@@ -1,0 +1,105 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Question</title>
+</head>
+<body>
+    <h1>Enter Questions for {{ subject_name }}</h1>
+    <form action="{{ url_for('submit_question') }}" method="post">
+        <input type="hidden" name="subject_name" value="{{ subject_name }}">
+        <label for="question">Question:</label>
+        <input type="text" id="question" name="question" required><br>
+        <label for="option1">Option 1:</label>
+        <input type="text" id="option1" name="option1" required><br>
+        <label for="option2">Option 2:</label>
+        <input type="text" id="option2" name="option2" required><br>
+        <label for="option3">Option 3:</label>
+        <input type="text" id="option3" name="option3" required><br>
+        <label for="option4">Option 4:</label>
+        <input type="text" id="option4" name="option4" required><br>
+        <label for="correct_option">Correct Option:</label>
+        <select id="correct_option" name="correct_option" required>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+            <option value="option4">Option 4</option>
+        </select><br>
+        <label for="tag">Tag:</label>
+        <input type="text" id="tag" name="tag" required><br>
+        <input type="submit" value="Submit Question">
+    </form>
+    <form action="{{ url_for('finish') }}" method="post">
+        <input type="submit" value="Finish">
+    </form>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Question</title>
+    <style>
+         input, button
+        {
+            padding: 5px;
+        }
+        .form-container
+        {
+            margin:140px auto;
+            width: 410px;
+            padding: 10px;
+            height: 440px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            box-shadow:0px 20px 35px rgba(0,0,1,0.9);
+        }
+        body
+        {
+            background-color: black;
+        }
+        button
+        {
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Enter Questions for {{ subject_name }}</h1>
+        <form action="{{ url_for('submit_question') }}" method="post">
+            <input type="hidden" name="subject_name" value="{{ subject_name }}">
+            <label for="question">Question:</label>
+            <input type="text" id="question" name="question" required><br>
+            <label for="option1">Option 1:</label>
+            <input type="text" id="option1" name="option1" required><br>
+            <label for="option2">Option 2:</label>
+            <input type="text" id="option2" name="option2" required><br>
+            <label for="option3">Option 3:</label>
+            <input type="text" id="option3" name="option3" required><br>
+            <label for="option4">Option 4:</label>
+            <input type="text" id="option4" name="option4" required><br><br>
+            <label for="correct_option">Correct Option:</label>
+            <select id="correct_option" name="correct_option" required>
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+                <option value="option4">Option 4</option>
+            </select><br><br>
+            <label for="tag">Tag:</label>
+            <input type="text" id="tag" name="tag" required><br>
+            <br><input type="submit" value="Submit Question">
+        </form><br>
+        <form action="{{ url_for('finish') }}" method="post">
+            <input type="submit" value="Finish">
+        </form>
+
+    </div>
+    
+</body>
+</html>

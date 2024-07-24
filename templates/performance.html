@@ -1,0 +1,90 @@
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Performance Results</h1>
+        <div class="score-container">
+            <h2>Your Score</h2>
+            <p id="score-text">{{ score }}</p>
+        </div>
+        <div class="graph-container">
+            <h2>Analysis</h2>
+            <img id="performance-graph" src="{{ graph_path }}" alt="Performance Graph">
+        </div>
+        <div class="feedback-container">
+            <p id="feedback-text">{{ feedback }}</p>
+        </div>
+    </div>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .score-container {
+            margin: 20px 0;
+        }
+        .score-container h2 {
+            font-size: 2em;
+            color: #333;
+        }
+        .score-container p {
+            font-size: 3em; /* Increase font size */
+            font-weight: bold; /* Make the text bold */
+            color: #ff5722; /* Change color to make it more prominent */
+        }
+        .graph-container {
+            margin: 20px 0;
+        }
+        .feedback-container {
+            margin: 20px 0;
+        }
+        .feedback-container h2 {
+            font-size: 1.5em;
+            color: #333;
+        }
+        .feedback-container p {
+            font-size: 1.2em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Performance Results</h1>
+        <div class="score-container">
+            <h2>Your Score</h2>
+            <p id="score-text">{{ score }}</p>
+        </div>
+        <div class="graph-container">
+            <h2>Performance Graph</h2>
+            <img id="performance-graph" src="{{ graph_path }}" alt="Performance Graph">
+        </div>
+        <div class="feedback-container">
+            <h2>Analysis</h2>
+            <p id="feedback-text">{{ feedback }}</p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Subject</title>
+</head>
+<body>
+    <h1>Select Subject</h1>
+    <form action="{{ url_for('index') }}" method="get">
+        <label for="subject_name">Subject:</label>
+        <select id="subject_name" name="subject_name" required>
+            {% for subject in subjects %}
+                <option value="{{ subject }}">{{ subject }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Start Quiz">
+    </form>
+</body>
+</html>

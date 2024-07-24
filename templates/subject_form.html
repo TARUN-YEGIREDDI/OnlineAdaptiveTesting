@@ -1,0 +1,86 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Subject</title>
+</head>
+<body>
+    <h1>Enter Subject Name</h1>
+    <form action="{{ url_for('submit_subject') }}" method="post">
+        <label for="subject_name">Subject Name:</label>
+        <input type="text" id="subject_name" name="subject_name" required>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+ -->
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>select subject</title>
+     <style>
+         
+             body 
+             {
+                 justify-content: center;
+                 align-items: center;
+                 background-color: rgb(27, 24, 24);
+                 font-family: Arial, sans-serif;
+                 
+             }
+             .formclass
+             {
+                 text-align: center;
+                 /* background-color: rgba(255, 255, 255, 0.8); Semi-transparent white background for the div */
+                 padding: 20px;
+                 border-radius: 10px;
+                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                 max-width: 400px;
+                 width: 100%;
+                 margin: auto;
+                 margin-top: 200px;
+                 background-color: #F5F5F5;
+             }
+             button
+             {
+                 margin:5px;
+                 padding: 5px;
+                 border-radius: 5px;
+             }
+             
+         
+     </style>
+ </head>
+ <body>
+     <div class="formclass">
+         <h2>Enter subject Name</h2>
+         <form action="{{ url_for('submit_subject') }}" method="post">
+             <select name="subject_name" id="subject">
+                 <option value="" disabled selected>Select your subject</option>
+                 <option value="mathematics">Mathematics</option>
+                 <option value="science">Science</option>
+                 <option value="history">History</option>
+                 <option value="english">English</option>
+                 <option value="geography">Geography</option>
+                 <!-- Add more subjects as needed -->
+             </select><br>
+             <br>
+             <br>
+             <!-- <label for="subject_name">Subject Name:</label>
+             <input type="text" id="subject_name" name="subject_name"> -->
+             <input type="submit" value="Submit">
+         </form>
+         <!-- <button onclick="redirecttopage('questions.html')">Submit</button> -->
+     </div>
+     <!-- <script>
+         function redirecttopage(url)
+         {
+             window.location.href=url;
+         }
+ 
+     </script> -->
+     
+ </body>
+ </html>
