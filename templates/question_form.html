@@ -71,9 +71,9 @@
 </head>
 <body>
     <div class="form-container">
-        <h1>Enter Questions for {{ subject_name }}</h1>
-        <form action="{{ url_for('submit_question') }}" method="post">
-            <input type="hidden" name="subject_name" value="{{ subject_name }}">
+        <h1>Enter Questions for {{ test_name }}</h1>
+        <p>Questions that are entered must be more than "Number of Questions" fixed in the Test</p>
+        <form action="{{ url_for('submit_question', test_id =test_id) }}" method="post">
             <label for="question">Question:</label>
             <input type="text" id="question" name="question" required><br>
             <label for="option1">Option 1:</label>

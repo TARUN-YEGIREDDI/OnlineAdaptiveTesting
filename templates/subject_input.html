@@ -47,17 +47,19 @@
  <body>
      <div class="cont">
          <h1>Enter Subject Name</h1>
-         <form action="{{ url_for('student_quiz') }}" method="post">
-            <select name="subject_name" id="subject">
+         <form action="{{ url_for('student_quiz', Test_name=Test_name) }}" method="get">
+            <!-- <select name="subject_name" id="subject">
                 <option value="" disabled selected>Select your subject</option>
                 <option value="mathematics">Mathematics</option>
                 <option value="science">Science</option>
                 <option value="history">History</option>
                 <option value="english">English</option>
                 <option value="geography">Geography</option>
-                <option value="ques">Ques</option>
+                <option value="ques">Ques</option> -->
                 <!-- Add more subjects as needed -->
-            </select><br>
+            <!-- </select><br> -->
+            <label for="Test_name">Test Name:</label>
+            <input type="text" id="Test_name" name="Test_name" required>
              <br><button type="submit">Start Quiz</button>
          </form>
      </div>

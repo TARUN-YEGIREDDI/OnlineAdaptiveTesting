@@ -57,20 +57,34 @@
      <div class="formclass">
          <h2>Enter subject Name</h2>
          <form action="{{ url_for('submit_subject') }}" method="post">
-             <select name="subject_name" id="subject">
+             <!-- <select name="subject_name" id="subject">
                  <option value="" disabled selected>Select your subject</option>
                  <option value="mathematics">Mathematics</option>
                  <option value="science">Science</option>
                  <option value="history">History</option>
                  <option value="english">English</option>
-                 <option value="geography">Geography</option>
+                 <option value="geography">Geography</option> -->
                  <!-- Add more subjects as needed -->
              </select><br>
              <br>
              <br>
-             <!-- <label for="subject_name">Subject Name:</label>
-             <input type="text" id="subject_name" name="subject_name"> -->
-             <input type="submit" value="Submit">
+             <label for="teacher_name">Teacher name:</label>
+             <input type="text" id="teacher_name" name="teacher_name">
+             <br>
+             <label for="email">Email:</label>
+             <input type="text" id="email" name="email">
+             <br>
+             <label for="password">Password:</label>
+             <input type="text" id="password" name="password">
+             <br>
+             <label for="subject_name">Test Name:</label>
+             <input type="text" id="test_name" name="test_name">
+             <!-- <input type="submit" value="Submit"> -->
+             <br>
+             <label for="Number_of_questions">Number_of_questions:</label>
+             <input type="text" id="Number_of_questions" name="Number_of_questions">
+             <br>
+             <button>Submit</button>
          </form>
          <!-- <button onclick="redirecttopage('questions.html')">Submit</button> -->
      </div>

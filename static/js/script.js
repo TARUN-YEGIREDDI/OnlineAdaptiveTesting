@@ -9,7 +9,7 @@
     let currentQuestionIndex, score, totalQuestionsAsked, questions;
     let usedQuestions = new Set();
     const appDiv = document.querySelector('.app');
-    const subjectName = appDiv.getAttribute('data-subject-name');
+    const TestName = appDiv.getAttribute('data-subject-name');
     const perform = document.getElementById('performance');
     const performanceGraph = document.getElementById('performance-graph');
     let wrongquestions = [];
@@ -17,7 +17,7 @@
 
     function fetchQuestions(tag, limit) {
         tag_name = tag;
-        return fetch(`/questions?subject_name=${subjectName}&tag=${tag}&limit=${limit}`)
+        return fetch(`/questions?Test_name=${TestName}&tag=${tag}&limit=${limit}`)
             .then(response => response.json())
             .then(data => {
                 data = data.filter(question => !usedQuestions.has(question.text));

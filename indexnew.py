@@ -11,8 +11,8 @@ app = Flask(__name__)
 # Configuration for MySQL database
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'lokesh@2004'
-app.config['MYSQL_DB'] = 'questions'
+app.config['MYSQL_PASSWORD'] = 'Tarun9392440350'
+app.config['MYSQL_DB'] = 'online_assesment'
 
 # Configure Google Generative AI
 api_key = 'AIzaSyAartIcl8H5Uax4PI-msaiDlCqI2RBMEzg'
@@ -46,30 +46,18 @@ def create_connection():
         print(f"Error: {e}")
         return None
 
-def create_table(subject_name):
-    connection = create_connection()
-    if connection:
-        cursor = connection.cursor()
-        try:
-            table_creation_query = f"""
-            CREATE TABLE IF NOT EXISTS `{subject_name}` (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                question VARCHAR(255) NOT NULL,
-                option1 VARCHAR(255) NOT NULL,
-                option2 VARCHAR(255) NOT NULL,
-                option3 VARCHAR(255) NOT NULL,
-                option4 VARCHAR(255) NOT NULL,
-                correct_option VARCHAR(255) NOT NULL,
-                tag VARCHAR(50) NOT NULL
-            )"""
-            cursor.execute(table_creation_query)
-            connection.commit()
-            print(f"Table `{subject_name}` created successfully.")
-        except Error as e:
-            print(f"Error: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+
+
+def table_exists(connection, table_name):
+    cursor = connection.cursor()
+    cursor.execute("SHOW TABLES LIKE %s", (table_name,))
+    result = cursor.fetchone()
+    cursor.close()
+    return result is not None   
+
+
+
+# home page
 
 @app.route('/')
 def role_selection():
@@ -84,23 +72,65 @@ def role_redirect():
         return redirect(url_for('subject_input'))
     else:
         return redirect(url_for('role_selection'))
+    
+
+
+# Teacher operations.......
+
+
 
 @app.route('/subject_form')
 def subject_form():
     return render_template('subject_form.html')
 
+
 @app.route('/submit', methods=['POST'])
 def submit_subject():
-    subject_name = request.form['subject_name']
-    create_table(subject_name)
-    return redirect(url_for('question_form', subject_name=subject_name))
+    test_name = request.form['test_name']
+    teacher_name = request.form['teacher_name']
+    email = request.form['email']
+    password = request.form['password']
+    Number_of_questions = request.form['Number_of_questions']
+    
+    connection = create_connection()
+    if connection:
+        cursor = connection.cursor(dictionary=True)
+        try:
+            # Fetch the teacher_id based on the provided name, email, and password
+            cursor.execute("SELECT teacher_id FROM Teachers WHERE name = %s AND email = %s AND password = %s", (teacher_name, email, password))
+            teacher = cursor.fetchone()
+            
+            if not teacher:
+                return jsonify({"error": "Invalid credentials."}), 401
+            
+            teacher_id = teacher['teacher_id']
+            
+            # Check if test_name already exists for the teacher
+            cursor.execute("SELECT test_name FROM Tests WHERE test_name = %s AND teacher_id = %s", (test_name, teacher_id))
+            existing_test = cursor.fetchone()
+
+            if existing_test:
+                return jsonify({"error": "Test name already exists. Please choose another name."}), 400
+
+            # Create a new test and get the generated test_id
+            cursor.execute("INSERT INTO Tests (teacher_id, test_name, Number_of_questions) VALUES (%s, %s, %s)", (teacher_id, test_name, Number_of_questions))
+            connection.commit()
+            test_id = cursor.lastrowid
+
+            return redirect(url_for('question_form', test_id=test_id, test_name=test_name))
+        except Error as e:
+            print(f"Error: {e}")
+        finally:
+            cursor.close()
+            connection.close()
 
 @app.route('/question_form')
 def question_form():
-    subject_name = request.args.get('subject_name')
-    return render_template('question_form.html', subject_name=subject_name)
+    test_name = request.args.get('test_name')
+    test_id = request.args.get('test_id')
+    return render_template('question_form.html', test_id=test_id, test_name = test_name)
 
-@app.route('/submit_question', methods=['POST'])
+@app.route('/submit_question', methods=['GET','POST'])
 def submit_question():
     question = request.form['question']
     option1 = request.form['option1']
@@ -109,15 +139,17 @@ def submit_question():
     option4 = request.form['option4']
     correct_option = request.form['correct_option']
     tag = request.form['tag']
-    subject_name = request.form['subject_name']
+    test_id = request.args.get('test_id')
+
+    print(f"Submitted test_id: {test_id}")
 
     connection = create_connection()
     if connection:
         cursor = connection.cursor()
         try:
             cursor.execute(
-                f"INSERT INTO `{subject_name}` (question, option1, option2, option3, option4, correct_option, tag) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                (question, option1, option2, option3, option4, correct_option, tag)
+                "INSERT INTO Test_Questions (question, option1, option2, option3, option4, correct_option, tag, test_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                (question, option1, option2, option3, option4, correct_option, tag, test_id)
             )
             connection.commit()
             print("Question data inserted successfully.")
@@ -127,35 +159,56 @@ def submit_question():
             cursor.close()
             connection.close()
 
-    return redirect(url_for('question_form', subject_name=subject_name))
+    return redirect(url_for('question_form', test_id=test_id))
+
 
 @app.route('/finish', methods=['POST'])
 def finish():
     return redirect(url_for('role_selection'))
 
+
+# Student operations....
+
 @app.route('/subject_input')
 def subject_input():
     return render_template('subject_input.html')
 
-@app.route('/student_quiz', methods=['POST'])
+@app.route('/student_quiz', methods=['GET'])
 def student_quiz():
-    subject_name = request.form['subject_name']
-    print(subject_name)
-    return redirect(url_for('index',subject_name=subject_name))
+    Test_name = request.args.get('Test_name')
+    print(Test_name)
+    return redirect(url_for('index',Test_name=Test_name))
+
+
 
 @app.route('/questions', methods=['GET'])
 def get_questions():
-    subject_name = request.args.get('subject_name')
+    test_name = request.args.get('Test_name')
     tag = request.args.get('tag', 'easy')
     limit = int(request.args.get('limit', 5))
+    
+    if not test_name:
+        return jsonify({'msg': 'Test name not provided or invalid.'}), 400
+    
     connection = create_connection()
     if connection:
         cursor = connection.cursor(dictionary=True)
-        print(subject_name)
-        query = f"SELECT * FROM `{subject_name}` WHERE tag = %s ORDER BY RAND() LIMIT %s"
-        cursor.execute(query, (tag, limit))
+        
+        # Check if test_name exists in Tests table to determine if it's a custom test
+        cursor.execute("SELECT test_id FROM Tests WHERE test_name = %s", (test_name,))
+        test = cursor.fetchone()
+        
+        if test:
+            # If test_id exists, retrieve questions from Test_Questions table
+            test_id = test['test_id']
+            query = "SELECT * FROM Test_Questions WHERE test_id = %s AND tag = %s ORDER BY RAND() LIMIT %s"
+            cursor.execute(query, (test_id, tag, limit))
+        else:
+            # If test_id does not exist, retrieve questions from the predefined table
+            query = f"SELECT * FROM `{test_name}` WHERE tag = %s ORDER BY RAND() LIMIT %s"
+            cursor.execute(query, (tag, limit))
+        
         questions = cursor.fetchall()
-        print("Vaar")
         formatted_questions = []
         for question in questions:
             formatted_question = {
@@ -168,20 +221,24 @@ def get_questions():
                 ]
             }
             formatted_questions.append(formatted_question)
+        
         cursor.close()
         connection.close()
-        print(formatted_questions)  # Debugging: print the formatted questions
         
         return jsonify(formatted_questions)
     
     return jsonify({'msg': 'Failed to connect to database'})
 
+
+
 @app.route('/index')
 def index():
-    subject_name = request.args.get('subject_name')
-    print(subject_name,"Index file")
+    Test_name = request.args.get('Test_name')
+    print(Test_name,"Index file")
 
-    return render_template('index.html', subject_name=subject_name)
+    return render_template('index.html', Test_name=Test_name)
+
+# Results......
 
 @app.route('/submit_results', methods=['POST'])
 def submit_results():
@@ -231,6 +288,9 @@ def submit_results():
     feedback = response.text
 
     return jsonify({'address': r"static\images\performance_graph.png", 'feedback': feedback})
+
+
+# Displaying the feedback...
 
 @app.route('/performance')
 def performance():
