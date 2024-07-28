@@ -1,68 +1,90 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Enter Subject</title>
+    <style>
+        body {
+            background-color: #c9d6ff;
+            background: linear-gradient(to right, #e2e2e2, rgb(131, 219, 219));
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .cont {
+            background: linear-gradient(to right, #e2e2e2, rgb(98, 196, 196));
+            text-align: center;
+            color: black;
+            width: 380px;
+            height: auto;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin: auto;
+            margin-top: 200px;
+            box-shadow: 0px 20px 35px rgba(0, 0, 1, 0.9);
+        }
+
+        h1 {
+            color: black;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .inner {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: black;
+        }
+
+        input[type="text"] {
+            width: 60%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0071f2;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            border-radius: 12px;
+            background: rgb(47, 180, 180);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background: #07001f;
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
-    <h1>Enter Subject Name</h1>
-    <form action="{{ url_for('student_quiz') }}" method="post">
-        <label for="subject_name">Subject Name:</label>
-        <input type="text" id="subject_name" name="subject_name" required>
-        <button type="submit">Start Quiz</button>
-    </form>
+    <div class="cont">
+        <h1>Enter Subject Name</h1>
+        <form action="{{ url_for('student_quiz', Test_name=Test_name) }}" method="get">
+            <div class="inner">
+                <label for="Test_name">Test Name:</label>
+                <input type="text" id="Test_name" name="Test_name" required>
+            </div>
+            <button type="submit">Start Quiz</button>
+        </form>
+    </div>
 </body>
 </html>
- -->
-
-
- <!DOCTYPE html>
- <html>
- <head>
-     <title>Enter Subject</title>
-     <style>
-         body
-         {
-             background-color: #405D72;
-         }
-         .cont
-         {
-             width:300px;
-             height: 200px;
-             text-align: center;
-             padding: 10px;
-             border-radius: 10px;
-             margin: auto;
-             margin-top: 200px;
-             justify-content: center;
-             background-color: white;
-             box-shadow:0px 20px 35px rgba(0,0,1,0.9);
-         }
-          
-         button
-         {
-             border-radius: 5px;
-         }
-     </style>
- </head>
- <body>
-     <div class="cont">
-         <h1>Enter Subject Name</h1>
-         <form action="{{ url_for('student_quiz', Test_name=Test_name) }}" method="get">
-            <!-- <select name="subject_name" id="subject">
-                <option value="" disabled selected>Select your subject</option>
-                <option value="mathematics">Mathematics</option>
-                <option value="science">Science</option>
-                <option value="history">History</option>
-                <option value="english">English</option>
-                <option value="geography">Geography</option>
-                <option value="ques">Ques</option> -->
-                <!-- Add more subjects as needed -->
-            <!-- </select><br> -->
-            <label for="Test_name">Test Name:</label>
-            <input type="text" id="Test_name" name="Test_name" required>
-             <br><button type="submit">Start Quiz</button>
-         </form>
-     </div>
-     
- </body>
- </html>

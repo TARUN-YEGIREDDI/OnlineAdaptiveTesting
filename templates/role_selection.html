@@ -1,59 +1,84 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Select Role</title>
-</head>
-<body>
-    <h1>Select Role</h1>
-    <form action="{{ url_for('role_redirect') }}" method="post">
-        <label>
-            <input type="radio" name="role" value="teacher" required> Teacher
-        </label>
-        <label>
-            <input type="radio" name="role" value="student" required> Student
-        </label>
-        <input type="submit" value="Proceed">
-    </form>
-</body>
-</html>
-
- -->
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Role_selection</title>
     <style>
-        body
-        {
-            background-color: #405D72;
+        body {
+            /* background: rgb(2,0,36);
+            background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(64,93,114,1) 100%); */
+            background-color: #c9d6ff;
+            background: linear-gradient(to right, #e2e2e2, rgb(131, 219, 219));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        .main
-        {
-            height: 250px;
-            width: 350px;
-            background-color:white;
-            margin:auto;
+        .main {
+            position: relative;
+            height: 400px;
+            width: 450px;
+            background-color: white;
             text-align: center;
-            margin-top: 180px;
             padding-top: 50px;
             border-radius: 15px;
-            box-shadow:0px 20px 35px rgba(0,0,1,0.9);
+            box-shadow: 0px 20px 35px rgba(0,0,1,0.9);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            overflow: hidden;
         }
-        button
-        {
-            border-radius: 5px;
-            color:black;
-            background-color: white;
-            padding: 10px;
-            font-size: 30px;
+        h2{
+            font-size: 28px;
+        }
+        .main::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 27%;
+            height: 100%;
+            background-image: url("../static/images/photo.jpg");
+            background-size: cover;
+            background-position: start;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            height: 100%;
+            z-index: 1;
+            position: relative;
+        }
+        input[type="submit"] {
+            border-radius: 20px;
+            color: #07001f;
+            /* background-color: #0071f2; */
+            background: rgb(131, 219, 219);
+            padding: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100px;
+            margin-left: 120px;
+        }
+        input[type="submit"]:hover {
+            color: #fff;
+            background: #07001f;
+            border: 2px solid #0f1048;
         }
 
     </style>
 </head>
 <body>
+    
     <div class="main">
         <h2>Select your Role</h2>
         <!-- <button onclick="redirectToPage('studentsubject.html')">Student</button>

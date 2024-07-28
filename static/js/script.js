@@ -10,10 +10,14 @@
     let usedQuestions = new Set();
     const appDiv = document.querySelector('.app');
     const TestName = appDiv.getAttribute('data-subject-name');
+    const No_of_Questions = parseInt(appDiv.getAttribute('data-no-of-questions'));
     const perform = document.getElementById('performance');
     const performanceGraph = document.getElementById('performance-graph');
     let wrongquestions = [];
     let result = [0, 0, 0, 0, 0, 0];
+
+    console.log(No_of_Questions);
+    console.log("Type : " + typeof No_of_Questions);
 
     function fetchQuestions(tag, limit) {
         tag_name = tag;
@@ -116,9 +120,16 @@
     }
 
     function adjustDifficultyAndContinue() {
-        if (totalQuestionsAsked >= 10) {
+        if (totalQuestionsAsked >= No_of_Questions) 
+        {
             showScore();
-        } else if (totalQuestionsAsked >= 8) {
+        } 
+        else if(totalQuestionsAsked >= 10)
+        {
+            fetchQuestions('hard', 10);
+        }
+        else if (totalQuestionsAsked >= 8) 
+        {
             if (score >= 7) {
                 fetchQuestions('hard', 2);
             } else if (score === 6) {
@@ -126,7 +137,9 @@
             } else {
                 fetchQuestions('easy', 2);
             }
-        } else if (totalQuestionsAsked >= 5) {
+        } 
+        else if (totalQuestionsAsked >= 5) 
+        {
             if (score >= 4) {
                 fetchQuestions('medium', 3);
             } else {

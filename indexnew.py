@@ -176,8 +176,29 @@ def subject_input():
 @app.route('/student_quiz', methods=['GET'])
 def student_quiz():
     Test_name = request.args.get('Test_name')
+    connection = create_connection()
+    if connection:
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute("SELECT Number_of_questions FROM Tests WHERE Test_name = %s", (Test_name,))
+        Total_questions = cursor.fetchone()
+
+        if not Total_questions:
+            Total_questions = 25
+
     print(Test_name)
-    return redirect(url_for('index',Test_name=Test_name))
+    print(Total_questions)
+    return redirect(url_for('index',Test_name=Test_name, Total_questions=Total_questions))
+
+
+
+@app.route('/index')
+def index():
+    Test_name = request.args.get('Test_name')
+    Total_questions = request.args.get('Total_questions')
+    print(Test_name,"Index file")
+
+    return render_template('index.html', Test_name=Test_name, Total_questions=Total_questions)
 
 
 
@@ -231,13 +252,6 @@ def get_questions():
 
 
 
-@app.route('/index')
-def index():
-    Test_name = request.args.get('Test_name')
-    print(Test_name,"Index file")
-
-    return render_template('index.html', Test_name=Test_name)
-
 # Results......
 
 @app.route('/submit_results', methods=['POST'])
@@ -271,19 +285,28 @@ def submit_results():
     plt.savefig(save_path)
 
     # Generate feedback using Google Generative AI
-    prompt = f"""
-    You are a teacher who gives feedback based on some assessment parameters.
-    All questions have the same score. For now, use the below scores and give feedback. 
-    Total questions are 10.
-    I have written the exam and the details are:
-    easy questions = {results[1] + results[0]}, score = {results[1]}
-    medium questions = {results[3] + results[2]}, score = {results[3]}
-    hard questions = {results[5] + results[4]}, score = {results[5]}
-    
-    The questions I got wrong are: {', '.join(wrong_questions)}
-    analyze all the wrong questions and give generalized feedback.
-    give it in a paragraph manner which consists of 10 senences.
-    """
+    prompt = f""" You are a teacher who provides detailed feedback based on assessment results.
+            The exam consists of multiple questions with equal scores. Below are my exam details:
+
+            Total questions: {results[1] + results[0]} + {results[3] + results[2]} + {results[5] + results[4]}
+
+            Easy questions: Total = {results[1] + results[0]}, Score = {results[1]}
+            Medium questions: Total = {results[3] + results[2]}, Score = {results[3]}
+            Hard questions: Total = {results[5] + results[4]}, Score = {results[5]}
+
+            I got the following questions wrong: {', '.join(wrong_questions)}.
+
+            Please analyze my performance and provide feedback in the following format:
+
+            Provide an overall assessment of my performance based on the scores and the difficulty levels
+            of the questions. (2 lines)
+
+            Highlight the areas where I performed well. (2 lines)
+
+            Identify the areas where I need to improve, along with specific suggestions for how to enhance my
+            understanding and performance in these areas. (4 lines)
+
+            Ensure the feedback is constructive and aimed at helping me improve in future assessments. """
     response = model.generate_content(prompt)
     feedback = response.text
 
