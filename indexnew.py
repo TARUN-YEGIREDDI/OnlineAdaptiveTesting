@@ -184,7 +184,9 @@ def student_quiz():
         Total_questions = cursor.fetchone()
 
         if not Total_questions:
-            Total_questions = 25
+            Total_questions = 20
+        else:
+            Total_questions = Total_questions['Number_of_questions']
 
     print(Test_name)
     print(Total_questions)
@@ -259,6 +261,7 @@ def submit_results():
     data = request.json
     results = data.get('results', [])
     wrong_questions = data.get('wrongQuestions', [])
+    correct_questions = data.get('correctQuestions', [])    
 
     # Generate the graph
     categories = ['Easy', 'Medium', 'Hard']

@@ -6,18 +6,50 @@
     const playAgainButton = document.getElementById('play-again-btn');
     const questionNumberElement = document.getElementById('question-number');
     const tagElement = document.getElementById('tag');
-    let currentQuestionIndex, score, totalQuestionsAsked, questions;
+    let currentQuestionIndex, score, totalQuestionsAsked, questions, easyQuestions, mediumQuestions, hardQuestions;
     let usedQuestions = new Set();
     const appDiv = document.querySelector('.app');
     const TestName = appDiv.getAttribute('data-subject-name');
-    const No_of_Questions = parseInt(appDiv.getAttribute('data-no-of-questions'));
+    const totalQuestions = parseInt(appDiv.getAttribute('data-no-of-questions'));
     const perform = document.getElementById('performance');
     const performanceGraph = document.getElementById('performance-graph');
     let wrongquestions = [];
+    let correctquestions = [];
     let result = [0, 0, 0, 0, 0, 0];
+    let flag = 0;
+    let tag_name = "";
 
-    console.log(No_of_Questions);
-    console.log("Type : " + typeof No_of_Questions);
+
+    const easyPercentage = 40;
+    const mediumPercentage = 35;
+    const hardPercentage = 25;
+
+    easyQuestions = Math.ceil(totalQuestions * (easyPercentage / 100));
+    mediumQuestions = Math.round(totalQuestions * (mediumPercentage / 100));
+    hardQuestions = Math.round(totalQuestions * (hardPercentage / 100));
+
+    // Adjust counts to ensure the total is correct
+    while (easyQuestions + mediumQuestions + hardQuestions !== totalQuestions) {
+        const difference = totalQuestions - (easyQuestions + mediumQuestions + hardQuestions);
+    
+        if (difference > 0) {
+            // Increase medium or hard questions to match the totalQuestions
+            if (mediumQuestions <= hardQuestions) {
+                mediumQuestions += 1;
+            } else {
+                hardQuestions += 1;
+            }
+        } else {
+            // Decrease medium or hard questions to match the totalQuestions
+            if (mediumQuestions >= hardQuestions) {
+                mediumQuestions -= 1;
+            } else {
+                hardQuestions -= 1;
+            }
+        }
+    }
+
+    
 
     function fetchQuestions(tag, limit) {
         tag_name = tag;
@@ -41,7 +73,7 @@
         totalQuestionsAsked = 0;
         usedQuestions.clear();
         scoreContainer.classList.add('hidden');
-        fetchQuestions('easy', 5);
+        fetchQuestions('easy', easyQuestions);
     }
 
     function setNextQuestion() {
@@ -54,7 +86,7 @@
     }
 
     function showQuestion(question) {
-        questionNumberElement.innerText = ` ${totalQuestionsAsked + 1}`;
+        questionNumberElement.innerText = ` ${totalQuestionsAsked + 1})`;
         questionElement.innerText = question.text;
         tagElement.innerText = tag_name;
         answerButtonsElement.innerHTML = '';
@@ -100,16 +132,16 @@
             wrongquestions.push(question.text); // Store the question text
         }
         Array.from(answerButtonsElement.children).forEach(button => {
-            setStatusClass(button, button.dataset.correct === 'true');
+            setStatusClass(button, button.dataset.correct === 'true', selectedButton);
         });
         nextButton.classList.remove('hidden');
     }
 
-    function setStatusClass(element, correct) {
+    function setStatusClass(element, correct, selectedButton) {
         clearStatusClass(element);
         if (correct) {
             element.classList.add('correct');
-        } else {
+        } else if(element === selectedButton) {
             element.classList.add('incorrect');
         }
     }
@@ -119,34 +151,36 @@
         element.classList.remove('incorrect');
     }
 
+    
+
     function adjustDifficultyAndContinue() {
-        if (totalQuestionsAsked >= No_of_Questions) 
-        {
+        if (totalQuestionsAsked >= totalQuestions) {
             showScore();
-        } 
-        else if(totalQuestionsAsked >= 10)
-        {
-            fetchQuestions('hard', 10);
-        }
-        else if (totalQuestionsAsked >= 8) 
-        {
-            if (score >= 7) {
-                fetchQuestions('hard', 2);
-            } else if (score === 6) {
-                fetchQuestions('medium', 2);
+        } else if (totalQuestionsAsked >= easyQuestions + mediumQuestions) {
+            const marks = score;
+            const percentage = (marks / (easyQuestions + mediumQuestions)) * 100;
+            if (percentage >= 70 && flag ===1) {
+                console.log(flag);
+                fetchQuestions('hard', hardQuestions);
+            } else if (percentage >= 60 && percentage < 70) {
+                fetchQuestions('medium', hardQuestions);
             } else {
-                fetchQuestions('easy', 2);
+                fetchQuestions('easy', hardQuestions);
             }
-        } 
-        else if (totalQuestionsAsked >= 5) 
-        {
-            if (score >= 4) {
-                fetchQuestions('medium', 3);
+        } else if (totalQuestionsAsked >= easyQuestions) {
+            const easyMarks = score;
+            const percentage = (easyMarks / easyQuestions) * 100;
+            if (percentage >= 70) {
+                fetchQuestions('medium', mediumQuestions);
+                flag = 1;
+                console.log(flag);
             } else {
-                fetchQuestions('easy', 3);
+                fetchQuestions('easy', mediumQuestions);
             }
         }
     }
+
+
 
     function showScore() {
         const scoreContainer = document.getElementById('score-container');
@@ -164,7 +198,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ results: result, wrongQuestions: wrongquestions })
+            body: JSON.stringify({ results: result, wrongQuestions: wrongquestions, correctQuestions: correctquestions })
         })
         .then(response => response.json())
         .then(data => {
@@ -177,7 +211,7 @@
     nextButton.addEventListener('click', () => {
         currentQuestionIndex++;
         totalQuestionsAsked++;
-        if (totalQuestionsAsked >= 10) {
+        if (totalQuestionsAsked >= totalQuestions) {
             showScore();
         } else if (currentQuestionIndex >= questions.length) {
             adjustDifficultyAndContinue();
