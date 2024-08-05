@@ -3,8 +3,9 @@ import mysql.connector
 from mysql.connector import Error
 import matplotlib.pyplot as plt
 import io, os
-import base64
-import google.generativeai as genai
+from langchain_fireworks import Fireworks
+import json, re
+
 
 app = Flask(__name__)
 
@@ -14,22 +15,19 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'Tarun9392440350'
 app.config['MYSQL_DB'] = 'online_assesment'
 
-# Configure Google Generative AI
-api_key = 'AIzaSyAartIcl8H5Uax4PI-msaiDlCqI2RBMEzg'
-genai.configure(api_key=api_key)
 
-generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
-}
+# API key
+api_key = "3lk1SmcldssLjYinarStwZyGtI9tQ1CkF7qwGmewo6VBKlOT"
 
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    generation_config=generation_config
+# Initialize a Fireworks model using the provided API key
+llm = Fireworks(
+    model="accounts/fireworks/models/mixtral-8x7b-instruct",
+    base_url="https://api.fireworks.ai/inference/v1/completions",
+    max_tokens=500,
+    fireworks_api_key=api_key
 )
+
+
 
 def create_connection():
     try:
@@ -289,31 +287,53 @@ def submit_results():
 
     # Generate feedback using Google Generative AI
     prompt = f""" You are a teacher who provides detailed feedback based on assessment results.
-            The exam consists of multiple questions with equal scores. Below are my exam details:
+    The exam consists of multiple questions with equal scores. Below are my exam details:
 
-            Total questions: {results[1] + results[0]} + {results[3] + results[2]} + {results[5] + results[4]}
+    Total questions: {results[1] + results[0]} + {results[3] + results[2]} + {results[5] + results[4]}  
 
-            Easy questions: Total = {results[1] + results[0]}, Score = {results[1]}
-            Medium questions: Total = {results[3] + results[2]}, Score = {results[3]}
-            Hard questions: Total = {results[5] + results[4]}, Score = {results[5]}
+    Easy questions: Total = {results[1] + results[0]}, Score = {results[1]}
+    Medium questions: Total = {results[3] + results[2]}, Score = {results[3]}
+    Hard questions: Total = {results[5] + results[4]}, Score = {results[5]}
 
-            I got the following questions wrong: {', '.join(wrong_questions)}.
+    Correct questions: {" ".join(correct_questions)}
+    Wrong questions: {" ".join(wrong_questions)}
 
-            Please analyze my performance and provide feedback in the following format:
+    Please analyze my performance and provide feedback in the following format:
 
-            Provide an overall assessment of my performance based on the scores and the difficulty levels
-            of the questions. (2 lines)
+    1. Overall Performance:
+    Provide an overall assessment of my performance based on the scores and the difficulty levels
+    of the questions.
 
-            Highlight the areas where I performed well. (2 lines)
+    2. Areas of Strength:
+    Highlight the areas where I performed well by analyzing the correct questions.
 
-            Identify the areas where I need to improve, along with specific suggestions for how to enhance my
-            understanding and performance in these areas. (4 lines)
+    3. Areas for Improvement:
+    Identify the areas where I need to improve, along with specific suggestions for how to enhance my
+    understanding and performance in these areas by analyzing the wrong questions.
 
-            Ensure the feedback is constructive and aimed at helping me improve in future assessments. """
-    response = model.generate_content(prompt)
-    feedback = response.text
+    Ensure the feedback is structured as follows:
+    Overall Performance: <Your overall assessment here.>
+    Areas of Strength: <Your strengths here.>
+    Areas for Improvement: <Your improvement suggestions here.>
 
-    return jsonify({'address': r"static\images\performance_graph.png", 'feedback': feedback})
+    Do not include any additional text or sections. Do not use numbers in your response.
+    Ensure the feedback is concise, constructive, and aimed at helping me improve in future assessments."""
+
+    response = llm.invoke(prompt)
+    
+    overall_performance = re.search(r'Overall Performance:\s*(.*)', response).group(1).strip()
+    strengths = re.search(r'Areas of Strength:\s*(.*)', response).group(1).strip()
+    weaknesses = re.search(r'Areas for Improvement:\s*(.*)', response).group(1).strip()
+
+    feedback_json = {
+        "overall_performance": overall_performance,
+        "strengths": strengths,
+        "weaknesses": weaknesses
+    }
+
+    return jsonify({'address': r"static\images\performance_graph.png", 'feedback': json.dumps(feedback_json)})
+
+
 
 
 # Displaying the feedback...
@@ -323,6 +343,9 @@ def performance():
     graph_path = request.args.get('graph')
     feedback = request.args.get('feedback')
     score = request.args.get('score')
+
+    feedback = json.loads(feedback)
+    
     return render_template('performance.html', graph_path=graph_path, feedback=feedback, score=score)
 
 
