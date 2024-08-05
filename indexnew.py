@@ -17,7 +17,7 @@ app.config['MYSQL_DB'] = 'online_assesment'
 
 
 # API key
-api_key = "3lk1SmcldssLjYinarStwZyGtI9tQ1CkF7qwGmewo6VBKlOT"
+api_key = "your api key here"
 
 # Initialize a Fireworks model using the provided API key
 llm = Fireworks(
