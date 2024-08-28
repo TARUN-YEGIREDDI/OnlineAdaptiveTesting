@@ -12,7 +12,7 @@ app = Flask(__name__)
 # Configuration for MySQL database
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Tarun9392440350'
+app.config['MYSQL_PASSWORD'] = '******'
 app.config['MYSQL_DB'] = 'online_assesment'
 
 
