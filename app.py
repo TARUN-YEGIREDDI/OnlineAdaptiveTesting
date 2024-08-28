@@ -2,22 +2,25 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import mysql.connector
 from mysql.connector import Error
 import matplotlib.pyplot as plt
-import io, os
+import os
 from langchain_fireworks import Fireworks
 import json, re
+from dotenv import load_dotenv
 
 
 app = Flask(__name__)
 
+load_dotenv()
+
 # Configuration for MySQL database
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '******'
+app.config['MYSQL_PASSWORD'] = os.getenv("MYSQL_PASSWORD")
 app.config['MYSQL_DB'] = 'online_assesment'
 
 
 # API key
-api_key = "your api key here"
+api_key = os.getenv("FIREWORKS_API_KEY")
 
 # Initialize a Fireworks model using the provided API key
 llm = Fireworks(
