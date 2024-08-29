@@ -31,7 +31,7 @@ llm = Fireworks(
 )
 
 
-
+#Create a connection to the MySQL database
 def create_connection():
     try:
         connection = mysql.connector.connect(
@@ -41,14 +41,12 @@ def create_connection():
             database=app.config['MYSQL_DB']
         )
         if connection.is_connected():
-            print("Connection to MySQL established successfully.")
             return connection
     except Error as e:
-        print(f"Error: {e}")
         return None
 
 
-
+# Check if a table exists in the database
 def table_exists(connection, table_name):
     cursor = connection.cursor()
     cursor.execute("SHOW TABLES LIKE %s", (table_name,))
@@ -58,8 +56,9 @@ def table_exists(connection, table_name):
 
 
 
-# home page
+# Home page
 
+# To know the role of the user
 @app.route('/')
 def role_selection():
     return render_template('role_selection.html')
@@ -76,15 +75,16 @@ def role_redirect():
     
 
 
-# Teacher operations.......
+# Teacher operations
 
 
-
+# Display the form to input the custom test and teacher details
 @app.route('/subject_form')
 def subject_form():
     return render_template('subject_form.html')
 
 
+# It will submit the test details and redirect to the question form
 @app.route('/submit', methods=['POST'])
 def submit_subject():
     test_name = request.form['test_name']
@@ -120,17 +120,21 @@ def submit_subject():
 
             return redirect(url_for('question_form', test_id=test_id, test_name=test_name))
         except Error as e:
-            print(f"Error: {e}")
+            return jsonify({"error": "Error occured on submitting the test."}), 400
         finally:
             cursor.close()
             connection.close()
 
+
+# Display the form to input the questions
 @app.route('/question_form')
 def question_form():
     test_name = request.args.get('test_name')
     test_id = request.args.get('test_id')
     return render_template('question_form.html', test_id=test_id, test_name = test_name)
 
+
+# Submit the questions and redirect to the question form
 @app.route('/submit_question', methods=['GET','POST'])
 def submit_question():
     question = request.form['question']
@@ -142,7 +146,6 @@ def submit_question():
     tag = request.form['tag']
     test_id = request.args.get('test_id')
 
-    print(f"Submitted test_id: {test_id}")
 
     connection = create_connection()
     if connection:
@@ -153,9 +156,9 @@ def submit_question():
                 (question, option1, option2, option3, option4, correct_option, tag, test_id)
             )
             connection.commit()
-            print("Question data inserted successfully.")
+            # print("Question data inserted successfully.")
         except Error as e:
-            print(f"Error: {e}")
+            return jsonify({"error": "Error occured on submitting the Question."}), 400
         finally:
             cursor.close()
             connection.close()
@@ -163,17 +166,21 @@ def submit_question():
     return redirect(url_for('question_form', test_id=test_id))
 
 
+# Finish the test creation process
 @app.route('/finish', methods=['POST'])
 def finish():
     return redirect(url_for('role_selection'))
 
 
-# Student operations....
+# Student operations
 
+# Display the form to input the test name
 @app.route('/subject_input')
 def subject_input():
     return render_template('subject_input.html')
 
+
+# To know No.of questions available in the test
 @app.route('/student_quiz', methods=['GET'])
 def student_quiz():
     Test_name = request.args.get('Test_name')
@@ -189,22 +196,20 @@ def student_quiz():
         else:
             Total_questions = Total_questions['Number_of_questions']
 
-    print(Test_name)
-    print(Total_questions)
     return redirect(url_for('index',Test_name=Test_name, Total_questions=Total_questions))
 
 
-
+# Return the Total number of questions and test name of the test
 @app.route('/index')
 def index():
     Test_name = request.args.get('Test_name')
     Total_questions = request.args.get('Total_questions')
-    print(Test_name,"Index file")
+
 
     return render_template('index.html', Test_name=Test_name, Total_questions=Total_questions)
 
 
-
+# Display the questions to the student by fetching from the database
 @app.route('/questions', methods=['GET'])
 def get_questions():
     test_name = request.args.get('Test_name')
@@ -257,6 +262,7 @@ def get_questions():
 
 # Results......
 
+# calculate the results and generate the feedback
 @app.route('/submit_results', methods=['POST'])
 def submit_results():
     data = request.json
@@ -282,7 +288,6 @@ def submit_results():
     ax.legend()
 
     save_folder = os.path.join(os.getcwd(), 'static', 'images')
-    os.makedirs(save_folder, exist_ok=True)  # Create the folder if it doesn't exist
     save_path = os.path.join(save_folder, 'performance_graph.png')
 
     # Save the graph to the specified folder
