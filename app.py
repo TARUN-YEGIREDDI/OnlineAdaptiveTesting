@@ -293,7 +293,7 @@ def submit_results():
     # Save the graph to the specified folder
     plt.savefig(save_path)
 
-    # Generate feedback using Google Generative AI
+    # Generate feedback using  Generative AI
     prompt = f""" You are a teacher who provides detailed feedback based on assessment results.
     The exam consists of multiple questions with equal scores. Below are my exam details:
 

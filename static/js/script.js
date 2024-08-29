@@ -19,7 +19,7 @@
     let flag = 0;
     let tag_name = "";
 
-
+// percentage of questions for each difficulty level
     const easyPercentage = 40;
     const mediumPercentage = 35;
     const hardPercentage = 25;
@@ -49,8 +49,21 @@
         }
     }
 
-    
 
+// Start the quiz 
+    function startQuiz() {
+        score = 0;
+        perform.style.display = "none";
+        performanceGraph.classList.add('hidden');
+        result = [0, 0, 0, 0, 0, 0];
+        tag_name = "";
+        totalQuestionsAsked = 0;
+        usedQuestions.clear();
+        scoreContainer.classList.add('hidden');
+        fetchQuestions('easy', easyQuestions);
+    }
+    
+// Fetch questions from the server
     function fetchQuestions(tag, limit) {
         tag_name = tag;
         return fetch(`/questions?Test_name=${TestName}&tag=${tag}&limit=${limit}`)
@@ -64,18 +77,7 @@
             });
     }
 
-    function startQuiz() {
-        score = 0;
-        perform.style.display = "none";
-        performanceGraph.classList.add('hidden');
-        result = [0, 0, 0, 0, 0, 0];
-        tag_name = "";
-        totalQuestionsAsked = 0;
-        usedQuestions.clear();
-        scoreContainer.classList.add('hidden');
-        fetchQuestions('easy', easyQuestions);
-    }
-
+// Set the next question
     function setNextQuestion() {
         resetState();
         if (questions && questions.length > 0) {
@@ -85,6 +87,17 @@
         }
     }
 
+    // Reset the state of the question
+    function resetState() {
+        nextButton.classList.add('hidden');
+        while (answerButtonsElement.firstChild) {
+            answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+        }
+    }
+
+
+
+// Display the question
     function showQuestion(question) {
         questionNumberElement.innerText = ` ${totalQuestionsAsked + 1})`;
         questionElement.innerText = question.text;
@@ -103,13 +116,8 @@
         });
     }
 
-    function resetState() {
-        nextButton.classList.add('hidden');
-        while (answerButtonsElement.firstChild) {
-            answerButtonsElement.removeChild(answerButtonsElement.firstChild);
-        }
-    }
 
+// To store the correct and wrong questions based on the user's response
     function selectAnswer(e, question) {
         const selectedButton = e.target;
         const correct = selectedButton.dataset.correct === 'true';
@@ -137,6 +145,7 @@
         nextButton.classList.remove('hidden');
     }
 
+    // Set the status of the answer based on the user's response
     function setStatusClass(element, correct, selectedButton) {
         clearStatusClass(element);
         if (correct) {
@@ -146,13 +155,14 @@
         }
     }
 
+    // Clear the status of the answer
     function clearStatusClass(element) {
         element.classList.remove('correct');
         element.classList.remove('incorrect');
     }
 
     
-
+// Adjust the difficulty level based on the user's performance
     function adjustDifficultyAndContinue() {
         if (totalQuestionsAsked >= totalQuestions) {
             showScore();
@@ -181,7 +191,7 @@
     }
 
 
-
+// Display the score
     function showScore() {
         const scoreContainer = document.getElementById('score-container');
         scoreContainer.classList.remove('hidden');
@@ -192,6 +202,7 @@
         perform.addEventListener('click', performanceClickHandler);
     }
 
+    // Submit the results to the server and display the performance
     function performanceClickHandler(e) {
         fetch('/submit_results', {
             method: 'POST',
@@ -207,7 +218,7 @@
     }
     
     
-
+// next button event listener
     nextButton.addEventListener('click', () => {
         currentQuestionIndex++;
         totalQuestionsAsked++;
@@ -220,10 +231,12 @@
         }
     });
 
+    // play again button event listener
     playAgainButton.addEventListener('click', () => {
         startQuiz();
     });
 
+    // startQuiz function call to start the quiz
     startQuiz();
 });
 
